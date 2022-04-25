@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-1.6.4.js"></script>
+    <title>NHL Point System Changer</title>
+</head>
+<body>
+<script>
+    const years = [
+        "19992000","20002001","20012002","20022003","20032004",
+        "20052006","20062007","20072008","20082009","20092010",
+        "20102011","20112012","20122013","20132014","20142015",
+        "20152016","20162017","20172018","20182019","20192020",
+        "20202021","20212022"
+    ];
+    //Purposely left out 2004-2005(lockout season) and
+    async function getApi() {
+        years.forEach(year => {
+            $.getJSON('https://statsapi.web.nhl.com/api/v1/teams/10/stats?season='+year, function(data) {
+                var wins = data['stats'][0]['splits'][0]['stat']['wins'];
+                var losses = data['stats'][0]['splits'][0]['stat']['losses'];
+                var otl = data['stats'][0]['splits'][0]['stat']['ot'];
+                var newPts = (wins * 2) + (losses * 0) + (otl * 0);
+                document.getElementById("Points").innerHTML = year + " : " +  data['stats'][0]['splits'][0]['stat']['pts'];
+                document.getElementById("NewPoints").innerHTML = newPts;
+            });
+        });
+
+    }
+</script>
+<h2>Enter what you would like the point system to be like</h2>
+<form>
+    <label for="RegulationWin">Pts for winning in Regulation</label>
+        <input type="number" id="RegulationWin" name="RegulationWin" size="2" value="2">
+
+    <label for="RegulationLoss">Pts for losing in Regulation</label>
+        <input type="number" id="RegulationLoss" name="RegulationLoss" size="2" value="0">
+        <br>
+
+    <label for="OvertimeWin">Pts for winning in Overtime</label>
+        <input type="number" id="OvertimeWin" name="OvertimeWin" size="2" value="2">
+
+    <label for="OvertimeLoss">Pts for losing in Overtime</label>
+        <input type="number" id="OvertimeLoss" name="OvertimeLoss" size="2" value="1">
+        <br>
+
+<!--    <label for="ShootoutWin">Pts for winning in a Shootout</label>-->
+<!--        <input type="number" id="ShootoutWin" name="ShootoutWin" size="2" value="2">-->
+
+<!--    <label for="ShootoutLoss">Pts for losing in a Shootout</label>-->
+<!--        <input type="number" id="ShootoutLoss" name="ShootoutLoss" size="2" value="1">-->
+<!--        <br>-->
+
+        <input type="submit" value="Submit" onclick="getApi(); return false">
+</form>
+<h3> Results</h3>
+    <h4 id="Points"></h4>
+    <h4 id="NewPoints"></h4>
+</body>
+</html>
